@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+  labels:
+    app: my-jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-jenkins
+  template:
+    metadata:
+      labels:
+        app: my-jenkins
+    spec:
+      securityContext: #บังคับเป็น root
+        fsGroup: 0         
+        runAsUser: 0
+      containers:
+      - name: jenkins-container
+        image: jenkins/jenkins:2.554-jdk21
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080   #Jenkins Web UI
+        - containerPort: 50000  #Jenkins Agent Port
+        resources:
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: jenkins-home
+      volumes:
+      - name: jenkins-home
+        persistentVolumeClaim:
+          claimName: jenkins-volume-claim
