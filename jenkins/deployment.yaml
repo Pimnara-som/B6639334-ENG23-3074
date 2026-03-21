@@ -15,7 +15,7 @@ spec:
         app: my-jenkins
     spec:
       securityContext: #บังคับเป็น root
-        fsGroup: 0         
+        fsGroup: 1000         
         runAsUser: 0
       containers:
       - name: jenkins-container
